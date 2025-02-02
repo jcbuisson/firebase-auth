@@ -1,9 +1,12 @@
 {
-  "name": "",
+  "name": "firebase-auth",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
+  "imports": {
+    "#root/*": "./*"
+  },
   "license": "AGPL-version-3.0",
   "private": false,
   "engines": {
@@ -24,7 +27,7 @@
   },
   "contributors": [],
   "scripts": {
-    "dev": "npx nodemon app.js",
+    "dev": "npx nodemon src/app.js",
     "test": ""
   },
   "dependencies": {
