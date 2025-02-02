@@ -27,5 +27,6 @@ onMounted(() => {
       <button v-if="!user" @click="signInWithGithub">Sign in with Github</button>
       <button v-else @click="logOut">Logout</button>
       <p v-if="user">Hello, {{ user.displayName }}</p>
+      <p v-if="user">{{ user }}</p>
    </div>
 </template>

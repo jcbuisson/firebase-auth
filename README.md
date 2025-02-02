@@ -8,6 +8,7 @@ See https://firebase.google.com/docs/auth/
 - create an application in the Firebase console
 - add the various auth providers
 - config data : go to "Project settings" (cog on left side)
+- Add Your Domain to Firebase Authorized Domains : Authentication -> Settings -> Authorized domains, ajouter auth.jcbuisson.dev
 
 ### Google
 Rien à faire
