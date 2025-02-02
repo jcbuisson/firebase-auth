@@ -5,7 +5,7 @@ module.exports = {
    apps : [
 
       {
-         name: "offline",
+         name: "firebase-auth",
          script: "./src/app.js",
          watch: false,
       },
