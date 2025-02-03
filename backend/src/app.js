@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import admin from "firebase-admin"
+import bearerToken from 'express-bearer-token'
 
 const app = express()
 
@@ -9,28 +10,27 @@ admin.initializeApp({
    credential: admin.credential.cert("service-account.json"),
 })
 
-
 app.use(express.json())
+app.use(bearerToken({ cookie: true }))
 
-// Middleware to verify token
-const verifyToken = async (req, res, next) => {
-   console.log('req.body.token', req.body.token)
+// Protect below routes by checking JWT bearer token and attach .user to req
+app.use('/', async (req, res, next) => {
    try {
-      const token = req.body.token
+      const token = req.token
       if (!token) return res.status(401).json({ error: "No token provided" })
 
       const decodedToken = await admin.auth().verifyIdToken(token)
       req.user = decodedToken
+      console.log("User authenticated", req.user)
       next()
    } catch (error) {
       res.status(401).json({ error: "Invalid token" })
    }
-}
+})
 
 // Example protected route
-app.post("/auth", verifyToken, (req, res) => {
-   console.log("User authenticated", req.user)
-   res.sendStatus(200)
+app.get("/api", (req, res) => {
+   res.send({ PI: Math.pi })
 })
 
 

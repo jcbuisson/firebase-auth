@@ -5,25 +5,49 @@ import { auth, signInWithGoogle, signInWithFacebook, signInWithGithub, logOut, g
 import ReloadPrompt from '/src/components/ReloadPrompt.vue'
 import GithubLink from '/src/components/GithubLink.vue'
 
-const user = ref(null);
+const user = ref(null)
 
 onMounted(() => {
-   auth.onAuthStateChanged(async (u) => {
-      user.value = u
-      if (u) {
+   auth.onAuthStateChanged(async (user_) => {
+      user.value = user_
+      if (user_) {
          const token = await getUserToken()
-         console.log("Sending token to backend:", token)
-         await fetch("/auth", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-         })
+         localStorage.setItem("firebase-token", token)
+
+         // console.log("Sending JWT authentication token to backend", token)
+         // await fetch("/auth", {
+         //    method: "POST",
+         //    headers: { "Content-Type": "application/json" },
+         //    body: JSON.stringify({ token }),
+         // })
       }
    })
 })
 
+function signOut() {
+   logOut()
+   localStorage.removeItem(firebase-token)
+}
+
 function notImplemented() {
    alert("Not implemented")
+}
+
+async function getProtectedData() {
+   const jwt = localStorage.getItem("firebase-token")
+   try {
+      const res = await fetch("/api", {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwt}`
+         },
+      })
+      const val = await res.json()
+      console.log('val', val)
+   } catch(err) {
+      console.log('err', err)
+   }
 }
 </script>
 
@@ -44,10 +68,15 @@ function notImplemented() {
    </div>
 
    <div v-else>
-      <button @click="logOut">Logout</button>
+      <button @click="signOut">Logout</button>
       <p>Hello, {{ user.displayName }}</p>
       <p>{{ user }}</p>
    </div>
+
+   <div>
+      <button class="btn google" @click="getProtectedData">Fetch protected data</button>
+   </div>
+
 </template>
 
 <style scoped>

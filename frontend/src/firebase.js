@@ -37,7 +37,7 @@ export const signInWithGithub = async () => {
    return result.user
 }
 
-// Get Firebase Auth Token
+// Get Firebase JWT Auth Token
 export const getUserToken = async () => {
    if (!auth.currentUser) return null
    return await getIdToken(auth.currentUser)

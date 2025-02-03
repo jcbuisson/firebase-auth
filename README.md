@@ -2,6 +2,7 @@
 
 See https://firebase.google.com/docs/auth/
 
+After authentication, return a normalized user record and a JWT authentication token
 
 ## Firebase console settings
 
