@@ -13,20 +13,13 @@ onMounted(() => {
       if (user_) {
          const token = await getUserToken()
          localStorage.setItem("firebase-token", token)
-
-         // console.log("Sending JWT authentication token to backend", token)
-         // await fetch("/auth", {
-         //    method: "POST",
-         //    headers: { "Content-Type": "application/json" },
-         //    body: JSON.stringify({ token }),
-         // })
       }
    })
 })
 
 function signOut() {
    logOut()
-   localStorage.removeItem(firebase-token)
+   localStorage.removeItem('firebase-token')
 }
 
 function notImplemented() {
@@ -70,11 +63,30 @@ async function getProtectedData() {
    <div v-else>
       <button @click="signOut">Logout</button>
       <p>Hello, {{ user.displayName }}</p>
-      <p>{{ user }}</p>
+      <!-- <p>{{ user }}</p> -->
+      <div class="table-container">
+         <table>
+            <thead>
+               <tr>
+                     <th>Key</th>
+                     <th>Value</th>
+               </tr>
+            </thead>
+            <tbody>
+               <template v-for="key of ['uid', 'email', 'emailVerified', 'displayName', 'photoURL', 'metadata']">
+                  <tr>
+                     <td>{{ key }}</td>
+                     <td>{{ user[key] }}</td>
+                  </tr>
+               </template>
+            </tbody>
+         </table>
+      </div>
+
    </div>
 
    <div>
-      <button class="btn google" @click="getProtectedData">Fetch protected data</button>
+      <button class="btn google mt-2" @click="getProtectedData">Fetch protected data</button>
    </div>
 
 </template>
@@ -93,7 +105,7 @@ body {
    display: flex;
    flex-direction: column;
    gap: 10px;
-   width: 300px;
+   /* width: 300px; */
 }
 
 .btn {
@@ -153,4 +165,40 @@ body {
 .phone {
    background: #28a745;
 }
+
+.mt-2 {
+   margin-top: 20px;
+}
+
+.table-container {
+   max-width: 800px;
+   margin: 0 auto;
+   background: white;
+   border-radius: 8px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   overflow: hidden;
+}
+
+table {
+   width: 100%;
+   border-collapse: collapse;
+}
+
+th, td {
+   text-align: left;
+   padding: 12px;
+   border-bottom: 1px solid #ddd;
+}
+
+thead th {
+   background-color: #f7f7f7;
+   font-weight: bold;
+}
+
+th[colspan="4"] {
+   background-color: #e9ecef;
+   font-weight: bold;
+   text-align: left;
+}
+
 </style>
