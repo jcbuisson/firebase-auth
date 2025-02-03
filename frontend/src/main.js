@@ -1,8 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
-// import router from './router'
 import App from './App.vue'
+import '@fortawesome/fontawesome-free/css/all.min.css' // for fa-google, fa-facebook etc. classes
 
 createApp(App)
-   // .use(router)
    .mount('#app')
