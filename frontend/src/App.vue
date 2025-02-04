@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { auth, signInWithGoogle, signInWithFacebook, signInWithGithub, logOut, getUserToken } from "./firebase"
+import { auth, logOut, getUserToken,
+   signInWithGoogle, signInWithFacebook, signInWithGithub, signInWithApple, signInWithMicrosoft } from "./firebase"
 
 import ReloadPrompt from '/src/components/ReloadPrompt.vue'
 import GithubLink from '/src/components/GithubLink.vue'
 
 const user = ref(null)
+const data = ref()
+const dataError = ref(false)
 
 onMounted(() => {
    auth.onAuthStateChanged(async (user_) => {
@@ -36,10 +39,11 @@ async function getProtectedData() {
             "Authorization": `Bearer ${jwt}`
          },
       })
-      const val = await res.json()
-      console.log('val', val)
+      data.value = await res.json()
+      dataError.value = false
    } catch(err) {
-      console.log('err', err)
+      data.value = "error"
+      dataError.value = true
    }
 }
 </script>
@@ -54,16 +58,19 @@ async function getProtectedData() {
    <div class="container" v-if="!user">
       <button @click="signInWithGoogle" class="btn google"><i class="fab fa-google"></i> Sign in with Google</button>
       <button @click="signInWithFacebook" class="btn facebook"><i class="fab fa-facebook-f"></i> Sign in with Facebook</button>
-      <button @click="notImplemented" class="btn twitter"><i class="fab fa-twitter"></i> Sign in with Twitter</button>
+      <button @click="notImplemented" class="btn twitter"><i class="fab fa-x"></i> Sign in with X</button>
       <button @click="signInWithGithub" class="btn github"><i class="fab fa-github"></i> Sign in with Github</button>
       <button @click="notImplemented" class="btn email"><i class="fas fa-envelope"></i> Sign in with email</button>
       <button @click="notImplemented" class="btn phone"><i class="fas fa-phone"></i> Sign in with phone</button>
+      <button @click="notImplemented" class="btn apple"><i class="fab fa-apple"></i> Sign in with Apple</button>
+      <button @click="notImplemented" class="btn microsoft"><i class="fab fa-microsoft"></i> Sign in with Microsoft</button>
    </div>
 
    <div v-else>
       <button @click="signOut">Logout</button>
       <p>Hello, {{ user.displayName }}</p>
-      <!-- <p>{{ user }}</p> -->
+      <img :src="user.photoURL" v-if="user.photoURL" class="profile-img" />
+
       <div class="table-container">
          <table>
             <thead>
@@ -87,6 +94,7 @@ async function getProtectedData() {
 
    <div>
       <button class="btn google mt-2" @click="getProtectedData">Fetch protected data</button>
+      <p class="{ error: dataError }">{{ data }}</p>
    </div>
 
 </template>
@@ -106,6 +114,13 @@ body {
    flex-direction: column;
    gap: 10px;
    /* width: 300px; */
+}
+
+.profile-img {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   margin-top: 10px;
 }
 
 .btn {
@@ -155,6 +170,14 @@ body {
 }
 
 .github {
+   background: #24292e;
+}
+
+.apple {
+   background: #24292e;
+}
+
+.microsoft {
    background: #24292e;
 }
 

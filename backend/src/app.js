@@ -30,7 +30,7 @@ app.use('/', async (req, res, next) => {
 
 // Example protected route
 app.get("/api", (req, res) => {
-   res.send({ PI: Math.pi })
+   res.send({ a: 123, b: 234 })
 })
 
 

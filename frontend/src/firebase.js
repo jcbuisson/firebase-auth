@@ -1,9 +1,6 @@
 import { initializeApp } from "firebase/app"
-import { getAuth, signInWithPopup,
-   GoogleAuthProvider,
-   GithubAuthProvider, 
-   FacebookAuthProvider,
-   signOut, getIdToken } from "firebase/auth"
+import { getAuth, signInWithPopup, signOut, getIdToken,
+   GoogleAuthProvider, GithubAuthProvider,  FacebookAuthProvider, OAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 
 
 const firebaseConfig = {
@@ -21,6 +18,8 @@ const auth = getAuth(app)
 const googleProvider = new GoogleAuthProvider()
 const facebookProvider = new FacebookAuthProvider()
 const githubProvider = new GithubAuthProvider()
+const appleProvider = new OAuthProvider('apple.com')
+const microsoftProvider = new OAuthProvider('microsoft.com')
 
 export const signInWithGoogle = async () => {
    const result = await signInWithPopup(auth, googleProvider)
@@ -34,6 +33,16 @@ export const signInWithFacebook = async () => {
 
 export const signInWithGithub = async () => {
    const result = await signInWithPopup(auth, githubProvider)
+   return result.user
+}
+
+export const signInWithApple = async () => {
+   const result = await signInWithPopup(auth, appleProvider)
+   return result.user
+}
+
+export const signInWithMicrosoft = async () => {
+   const result = await signInWithPopup(auth, microsoftProvider)
    return result.user
 }
 
