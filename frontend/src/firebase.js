@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app"
 import { getAuth, signInWithPopup, signOut, getIdToken,
-   GoogleAuthProvider, GithubAuthProvider,  FacebookAuthProvider, OAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+   GoogleAuthProvider, GithubAuthProvider,  FacebookAuthProvider, OAuthProvider,
+   createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 
 
 const firebaseConfig = {
@@ -44,6 +45,27 @@ export const signInWithApple = async () => {
 export const signInWithMicrosoft = async () => {
    const result = await signInWithPopup(auth, microsoftProvider)
    return result.user
+}
+
+export const signInWithEmail = async (email, password) => {
+   const userCredential = await signInWithEmailAndPassword(auth, email, password)
+   console.log('userCredential', userCredential)
+   return userCredential.user
+}
+
+export const signUpWithEmail = async (email, password) => {
+   const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+   console.log('userCredential', userCredential)
+   return userCredential.user
+}
+
+export const resetPassword = async (email) => {
+   try {
+     await sendPasswordResetEmail(auth, email);
+     console.log("Password reset email sent to:", email);
+   } catch (error) {
+     console.error("Reset password error:", error.message);
+   }
 }
 
 // Get Firebase JWT Auth Token

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { auth, logOut, getUserToken,
-   signInWithGoogle, signInWithFacebook, signInWithGithub, signInWithApple, signInWithMicrosoft } from "./firebase"
+   signInWithGoogle, signInWithFacebook, signInWithGithub, signInWithEmail, signUpWithEmail, resetPassword } from "./firebase"
 
 import ReloadPrompt from '/src/components/ReloadPrompt.vue'
 import GithubLink from '/src/components/GithubLink.vue'
@@ -9,6 +9,9 @@ import GithubLink from '/src/components/GithubLink.vue'
 const user = ref(null)
 const data = ref()
 const dataError = ref(false)
+
+const formData = ref({})
+const errorMessage = ref()
 
 onMounted(() => {
    auth.onAuthStateChanged(async (user_) => {
@@ -47,6 +50,18 @@ async function getProtectedData() {
       dataError.value = true
    }
 }
+
+async function signIn() {
+   await signInWithEmail(formData.value.email, formData.value.password)
+}
+
+async function signUp() {
+   await signUpWithEmail(formData.value.email, formData.value.password)
+}
+
+async function forgottenPassword() {
+   await resetPassword(formData.value.email)
+}
 </script>
 
 <template>
@@ -65,6 +80,36 @@ async function getProtectedData() {
       <button @click="notImplemented" class="btn phone"><i class="fas fa-phone"></i> Sign in with phone</button>
       <button @click="notImplemented" class="btn apple"><i class="fab fa-apple"></i> Sign in with Apple</button>
       <button @click="notImplemented" class="btn microsoft"><i class="fab fa-microsoft"></i> Sign in with Microsoft</button>
+
+      <div class="separator mt-2">
+        <span>OU</span>
+      </div>
+    
+      <form @submit.prevent="">
+         <div class="form-group mb-2">
+            <label for="email">Email</label>
+            <div class="input-container">
+               <span class="icon">@</span>
+               <input type="email" id="email" name="email" v-model="formData.email" placeholder="Ex: abc@example.com" required>
+            </div>
+         </div>
+         <div class="form-group mb-2">
+            <label for="password">Mot de passe</label>
+            <div class="input-container">
+               <span class="icon">🔒</span>
+               <input type="password" id="password" name="password" v-model="formData.password" placeholder="********" required>
+            </div>
+         </div>
+
+         <p class="error">{{ errorMessage }}</p>
+
+         <div class="mb-2">
+            <button class="large-button" @click="signIn">Se connecter</button>
+            <button class="large-button" @click="signUp">Créer un compte</button>
+            <button @click="forgottenPassword">Mot de passe oublié</button>
+         </div>
+      </form>
+
    </div>
 
    <div v-else>
@@ -190,10 +235,6 @@ body {
    background: #28a745;
 }
 
-.mt-2 {
-   margin-top: 20px;
-}
-
 .table-container {
    max-width: 800px;
    margin: 0 auto;
@@ -225,4 +266,93 @@ th[colspan="4"] {
    text-align: left;
 }
 
+.separator {
+   display: flex;
+   align-items: center;
+   width: 100%;
+}
+
+.separator::before,
+.separator::after {
+   content: "";
+   flex: 1;
+   height: 1px;
+   background: #ccc;
+   margin: 0 10px;
+}
+
+.separator span {
+   font-size: 14px;
+   font-weight: bold;
+   color: #666;
+   text-transform: uppercase;
+}
+
+.login-container {
+   text-align: center; /* title text is centered */
+   width: 100%;
+   max-width: 400px;
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 10px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+   text-align: left; /* labels are left-aligned */
+   width: 100%;
+}
+
+label {
+   display: block;
+   font-size: 16px;
+   margin-bottom: 8px;
+}
+
+.input-container {
+   display: flex;
+   align-items: center;
+   border: 2px solid #4f46e5;
+   border-radius: 10px;
+   padding: 8px 12px;
+}
+
+.input-container .icon {
+   font-size: 18px;
+   color: #4f46e5;
+   margin-right: 8px;
+}
+
+.input-container input {
+   border: none;
+   outline: none;
+   font-size: 16px;
+   color: #333;
+   flex: 1;
+}
+
+.input-container input::placeholder {
+   color: #aaa;
+}
+
+.input-container:focus-within {
+   box-shadow: 0 0 5px #4f46e5;
+}
+
+h2 {
+   font-size: 24px;
+   margin-bottom: 20px;
+}
+
+.mt-2 {
+   margin-top: 20px;
+}
+
+.mb-2 {
+   margin-bottom: 20px;
+}
+
+.mb-4 {
+   margin-bottom: 40px;
+}
 </style>
