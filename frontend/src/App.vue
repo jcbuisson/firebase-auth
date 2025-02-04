@@ -13,6 +13,7 @@ const dataError = ref(false)
 onMounted(() => {
    auth.onAuthStateChanged(async (user_) => {
       user.value = user_
+      data.value = ""
       if (user_) {
          const token = await getUserToken()
          localStorage.setItem("firebase-token", token)
