@@ -7,16 +7,14 @@ import ReloadPrompt from '/src/components/ReloadPrompt.vue'
 import GithubLink from '/src/components/GithubLink.vue'
 
 const user = ref(null)
-const data = ref()
-const dataError = ref(false)
-
+const message = ref()
+const error = ref(false)
 const formData = ref({})
-const errorMessage = ref()
 
 onMounted(() => {
    auth.onAuthStateChanged(async (user_) => {
       user.value = user_
-      data.value = ""
+      message.value = ""
       if (user_) {
          const token = await getUserToken()
          localStorage.setItem("firebase-token", token)
@@ -43,24 +41,36 @@ async function getProtectedData() {
             "Authorization": `Bearer ${jwt}`
          },
       })
-      data.value = await res.json()
-      dataError.value = false
+      message.value = await res.json()
+      error.value = false
    } catch(err) {
-      data.value = "error"
-      dataError.value = true
+      message.value = "error"
+      error.value = true
    }
 }
 
 async function signIn() {
-   await signInWithEmail(formData.value.email, formData.value.password)
+   try {
+      await signInWithEmail(formData.value.email, formData.value.password)
+   } catch(err) {
+      message.value = err.message
+   }
 }
 
 async function signUp() {
-   await signUpWithEmail(formData.value.email, formData.value.password)
+   try {
+      await signUpWithEmail(formData.value.email, formData.value.password)
+   } catch(err) {
+      message.value = err.message
+   }
 }
 
 async function forgottenPassword() {
-   await resetPassword(formData.value.email)
+   try {
+      await resetPassword(formData.value.email)
+   } catch(err) {
+      message.value = err.message
+   }
 }
 </script>
 
@@ -76,12 +86,11 @@ async function forgottenPassword() {
       <button @click="signInWithFacebook" class="btn facebook"><i class="fab fa-facebook-f"></i> Sign in with Facebook</button>
       <button @click="notImplemented" class="btn twitter"><i class="fab fa-x"></i> Sign in with X</button>
       <button @click="signInWithGithub" class="btn github"><i class="fab fa-github"></i> Sign in with Github</button>
-      <button @click="notImplemented" class="btn email"><i class="fas fa-envelope"></i> Sign in with email</button>
       <button @click="notImplemented" class="btn phone"><i class="fas fa-phone"></i> Sign in with phone</button>
       <button @click="notImplemented" class="btn apple"><i class="fab fa-apple"></i> Sign in with Apple</button>
       <button @click="notImplemented" class="btn microsoft"><i class="fab fa-microsoft"></i> Sign in with Microsoft</button>
 
-      <div class="separator mt-2">
+      <div class="separator mt-1">
         <span>OU</span>
       </div>
     
@@ -101,19 +110,17 @@ async function forgottenPassword() {
             </div>
          </div>
 
-         <p class="error">{{ errorMessage }}</p>
-
-         <div class="mb-2">
-            <button class="large-button" @click="signIn">Se connecter</button>
-            <button class="large-button" @click="signUp">Créer un compte</button>
-            <button @click="forgottenPassword">Mot de passe oublié</button>
+         <div cclass="mb-2">
+            <button class="mybutton" @click="signIn">Se connecter</button>
+            <button class="mybutton" @click="signUp">Créer un compte</button>
+            <button class="mybutton" @click="forgottenPassword">Mot de passe oublié</button>
          </div>
       </form>
 
    </div>
 
    <div v-else>
-      <button @click="signOut">Logout</button>
+      <button class="mybutton" @click="signOut">Logout</button>
       <p>Hello, {{ user.displayName }}</p>
       <img :src="user.photoURL" v-if="user.photoURL" class="profile-img" />
 
@@ -138,9 +145,9 @@ async function forgottenPassword() {
 
    </div>
 
-   <div>
-      <button class="btn google mt-2" @click="getProtectedData">Fetch protected data</button>
-      <p class="{ error: dataError }">{{ data }}</p>
+   <div class="mt-2">
+      <button class="btn google" @click="getProtectedData">Fetch protected data</button>
+      <p>{{ message }}</p>
    </div>
 
 </template>
@@ -190,11 +197,25 @@ body {
 }
 
 .btn:hover {
-  border-color: #646cff;
+   border-color: #646cff;
 }
 .btn:focus,
 .btn:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.mybutton {
+   padding: 8px 12px;
+   background: #044c408a;
+   color: white;
+   border: none;
+   cursor: pointer;
+   border-radius: 5px;
+   margin-left: 5px;
+   margin-right: 5px;
+}
+.mybutton:hover {
+   background: #555;
 }
 
 .google {
@@ -220,11 +241,11 @@ body {
 }
 
 .apple {
-   background: #24292e;
+   background: #ed8f37;
 }
 
 .microsoft {
-   background: #24292e;
+   background: #3872de;
 }
 
 .email {
@@ -342,6 +363,10 @@ label {
 h2 {
    font-size: 24px;
    margin-bottom: 20px;
+}
+
+.mt-1 {
+   margin-top: 10px;
 }
 
 .mt-2 {

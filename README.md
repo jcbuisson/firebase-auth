@@ -21,6 +21,8 @@ Rien à faire
 ### Facebook
 - créer une Facebook App dans le [Facebook developer](https://developers.facebook.com/)
 
+### Email
+- email message customization: go to "Templates" tab in firebase console
 
 
 ## Backend settings
